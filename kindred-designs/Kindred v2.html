@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kindred v2 — Find your people</title>
+
+<link rel="stylesheet" href="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/tokens/colors.css">
+<link rel="stylesheet" href="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/tokens/typography.css">
+<link rel="stylesheet" href="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/tokens/shadows.css">
+<link rel="stylesheet" href="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/tokens/motion.css">
+<link rel="stylesheet" href="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/styles.css">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+
+  /* Mobile stage */
+  .stage {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 28px;
+    background: radial-gradient(ellipse at 25% 15%, #1D2D58 0%, #0D0F1E 55%, #050608 100%);
+  }
+  .phone {
+    width: 390px; height: 844px; flex-shrink: 0;
+    background: var(--surface-base); border-radius: 50px; overflow: hidden;
+    box-shadow: 0 0 0 10px #1c1c1e, 0 0 0 12px #3a3a3c, 0 28px 72px rgba(0,0,0,0.7);
+    display: flex; flex-direction: column;
+  }
+  .sbar {
+    height: 50px; flex-shrink: 0; display: flex; align-items: flex-end;
+    justify-content: space-between; padding: 0 28px 8px;
+    background: var(--surface-base); z-index: 10;
+  }
+  .sbar-time { font-size: 15px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.3px; }
+  .sbar-icons { display: flex; align-items: center; gap: 5px; color: var(--text-primary); }
+  .content { flex: 1; overflow: hidden; display: flex; flex-direction: column; background: var(--surface-base); }
+  .bnav {
+    height: 82px; flex-shrink: 0; background: var(--surface-raised);
+    border-top: 1px solid var(--border-subtle);
+    display: flex; align-items: flex-start; justify-content: space-around; padding-top: 10px;
+  }
+  .nbtn {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    cursor: pointer; padding: 2px 16px; border: none; background: none;
+    font-family: var(--font-sans);
+    transition: transform 0.12s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .nbtn:active { transform: scale(0.82); }
+  .nlbl { font-size: 10px; font-weight: 600; }
+
+  /* Web layout */
+  .wlayout { display: flex; height: 100vh; overflow: hidden; background: var(--neutral-100); }
+  .wsidebar {
+    width: 252px; flex-shrink: 0;
+    background: var(--surface-raised); border-right: 1px solid var(--border-subtle);
+    display: flex; flex-direction: column; padding: 20px 0 0;
+  }
+  .wcenter { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--surface-base); }
+  .wright {
+    width: 368px; flex-shrink: 0;
+    background: var(--surface-raised); border-left: 1px solid var(--border-subtle);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .snav {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+    cursor: pointer; border: none; background: none; width: 100%;
+    font-family: var(--font-sans); font-size: 15px; font-weight: 500;
+    color: var(--text-secondary); text-align: left; border-radius: 10px;
+    margin: 0 8px; width: calc(100% - 16px); transition: all 0.13s;
+  }
+  .snav:hover  { background: var(--neutral-100); color: var(--text-primary); }
+  .snav.active { background: var(--coral-50); color: var(--coral-600); font-weight: 600; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--neutral-300); border-radius: 2px; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/_ds_bundle.js"></script>
+<script src="kindred-data-v2.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="kindred-screens-v2.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+const { MEETUPS, GROUPS, GROUP_MSGS, DM_CONNS, DM_MSGS, MY_PROFILE, CAT } = window.KDv2;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "view": "mobile"
+}/*EDITMODE-END*/;
+
+/* ── Nav icons ─────────────────────────────────────────────────── */
+function NavIco({ id, active, color='var(--coral-500)' }) {
+  const s = { width:22, height:22, viewBox:'0 0 24 24', fill:'none',
+    stroke: active ? color : 'var(--neutral-400)', strokeWidth:2, strokeLinecap:'round', strokeLinejoin:'round' };
+  if (id==='home') return <svg {...s}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
+  if (id==='meet') return <svg {...s}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
+  if (id==='chat') return <svg {...s}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
+  return <svg {...s}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
+}
+const NAV = [
+  { id:'home', label:'Home'    },
+  { id:'meet', label:'Meet'    },
+  { id:'chat', label:'Chat'    },
+  { id:'me',   label:'Profile' },
+];
+
+/* ── Toast ─────────────────────────────────────────────────────── */
+function Toast({ msg, isMobile }) {
+  const [vis, setVis] = useState(false);
+  useEffect(() => {
+    if (!msg) { setVis(false); return; }
+    const t = setTimeout(() => setVis(true), 10);
+    return () => clearTimeout(t);
+  }, [msg]);
+  if (!msg) return null;
+  return (
+    <div style={{ position:'fixed', bottom: isMobile ? 94 : 24, left:'50%',
+      transform:`translateX(-50%) translateY(${vis?0:24}px)`,
+      opacity: vis?1:0, transition:'transform 0.38s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s',
+      zIndex:9999, pointerEvents:'none' }}>
+      <div style={{ padding:'12px 22px', borderRadius:99, background:'rgba(13,18,38,0.92)',
+        backdropFilter:'blur(12px)', color:'#fff', fontSize:14, fontWeight:600,
+        boxShadow:'0 8px 28px rgba(0,0,0,0.28)', whiteSpace:'nowrap' }}>
+        {msg}
+      </div>
+    </div>
+  );
+}
+
+/* ── Status bar ────────────────────────────────────────────────── */
+function SBar() {
+  return (
+    <div className="sbar">
+      <span className="sbar-time">9:41</span>
+      <div className="sbar-icons">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="6" width="3" height="6" rx="0.5" opacity="0.4"/><rect x="4" y="4" width="3" height="8" rx="0.5" opacity="0.6"/><rect x="8" y="2" width="3" height="10" rx="0.5" opacity="0.8"/><rect x="12" y="0" width="3" height="12" rx="0.5"/></svg>
+        <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M7.5 3C9.8 3 11.9 3.9 13.4 5.4M1.6 5.4C3.1 3.9 5.2 3 7.5 3" opacity="0.4"/><path d="M7.5 6C8.9 6 10.1 6.6 11 7.5M4 7.5C4.9 6.6 6.1 6 7.5 6" opacity="0.7"/><circle cx="7.5" cy="10" r="1" fill="currentColor" stroke="none"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" strokeOpacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><path d="M23 4.5v3a1.5 1.5 0 0 0 0-3z" fill="currentColor" opacity="0.4"/></svg>
+      </div>
+    </div>
+  );
+}
+
+/* ── Web right panel ───────────────────────────────────────────── */
+function WebRight({ tab, detailView, activeChatId, setActiveChatId,
+                    joinedMeetups, joinedGroups, groupMessages, dmMessages, dmConns,
+                    onJoinMeetup, onJoinGroup, onSend }) {
+  if (detailView) {
+    if (detailView.type === 'meetup') return <MeetupDetailV2 meetupId={detailView.id} joinedMeetups={joinedMeetups} onJoin={onJoinMeetup} onClose={()=>{}}/>;
+    if (detailView.type === 'group')  return <GroupDetailV2  groupId={detailView.id}  joinedGroups={joinedGroups}   onJoin={onJoinGroup}  onClose={()=>{}}/>;
+  }
+  if (tab === 'chat' && activeChatId) {
+    return <ChatRoomV2 chatKey={activeChatId} groupMessages={groupMessages} dmMessages={dmMessages}
+      dmConns={dmConns} onBack={()=>setActiveChatId(null)} onSend={onSend}/>;
+  }
+  // Empty state
+  const hints = {
+    home: { icon:'🗓', title:'Tap an event or group', body:'See details, attendees, and RSVP right here.' },
+    meet: { icon:'👥', title:'Browse and join',       body:'Tap any event or group to see details and join.' },
+    chat: { icon:'💬', title:'Select a conversation', body:'Choose a group chat or direct message.' },
+    me:   null,
+  };
+  const h = hints[tab];
+  if (!h) return null;
+  return (
+    <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center',
+      justifyContent:'center', padding:40, textAlign:'center' }}>
+      <div style={{ fontSize:44, marginBottom:14 }}>{h.icon}</div>
+      <div style={{ fontSize:16, fontWeight:700, color:'var(--text-secondary)', marginBottom:6 }}>{h.title}</div>
+      <div style={{ fontSize:14, color:'var(--text-tertiary)', lineHeight:1.65 }}>{h.body}</div>
+    </div>
+  );
+}
+
+/* ── App ───────────────────────────────────────────────────────── */
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const isMobile = t.view === 'mobile';
+
+  const [tab,           setTab]        = useState('home');
+  const [detailView,    setDetailView] = useState(null);  // { type, id }
+  const [activeChatId,  setActiveChatId] = useState(null);
+  const [joinedMeetups, setJoinedMeetups] = useState(new Set());
+  const [joinedGroups,  setJoinedGroups]  = useState(new Set([1, 3])); // pre-joined 2 groups
+  const [intPosts,      setIntPosts]      = useState(new Set());
+  const [groupMsgs,     setGroupMsgs]     = useState({ ...GROUP_MSGS });
+  const [dmMsgs,        setDmMsgs]        = useState({ ...DM_MSGS });
+  const [dmConns,       setDmConns]       = useState([...DM_CONNS]);
+  const [toastMsg,      setToastMsg]      = useState(null);
+  const toastTimer = useRef(null);
+
+  const showToast = msg => {
+    clearTimeout(toastTimer.current);
+    setToastMsg(msg);
+    toastTimer.current = setTimeout(() => setToastMsg(null), 3000);
+  };
+
+  const handleJoinMeetup = id => {
+    const m = MEETUPS.find(x => x.id === id);
+    if (!m) return;
+    setJoinedMeetups(p => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
+    if (!joinedMeetups.has(id)) showToast(`You're going to ${m.title}!`);
+  };
+
+  const handleJoinGroup = id => {
+    const g = GROUPS.find(x => x.id === id);
+    if (!g) return;
+    setJoinedGroups(p => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
+    if (!joinedGroups.has(id)) {
+      showToast(`Joined ${g.name} — group chat unlocked`);
+      // On web, open the group chat automatically
+      if (!isMobile) { setTab('chat'); setActiveChatId(`group-${id}`); }
+    }
+  };
+
+  const handlePostInterest = id => {
+    setIntPosts(p => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
+    const post = window.KDv2.LFG_POSTS.find(x => x.id === id);
+    if (post && !intPosts.has(id)) showToast(`Sent interest to ${post.name}`);
+  };
+
+  const handleDetail = (type, id) => setDetailView({ type, id });
+
+  const handleSend = (chatKey, text) => {
+    if (chatKey.startsWith('group-')) {
+      const id = parseInt(chatKey.split('-')[1]);
+      setGroupMsgs(p => ({ ...p, [id]: [...(p[id]||[]), { from:'You', g:'linear-gradient(155deg,#FF9278,#FF5733)', text, time:'Now', mine:true }] }));
+    } else {
+      const id = parseInt(chatKey.split('-')[1]);
+      setDmMsgs(p => ({ ...p, [id]: [...(p[id]||[]), { from:'me', text, time:'Now' }] }));
+      setDmConns(p => p.map(c => c.id===id ? { ...c, unread:0, lastMsg:text } : c));
+    }
+  };
+
+  const totalChatUnread = dmConns.reduce((s,c) => s+c.unread, 0);
+
+  const sharedProps = {
+    tab, setTab: id => { setTab(id); setDetailView(null); setActiveChatId(null); },
+    detailView, setDetailView,
+    activeChatId, setActiveChatId,
+    joinedMeetups, joinedGroups, intPosts,
+    onJoinMeetup: handleJoinMeetup,
+    onJoinGroup:  handleJoinGroup,
+    onPostInterest: handlePostInterest,
+    onDetail: handleDetail,
+    groupMsgs, dmMsgs, dmConns,
+    onSend: handleSend,
+    totalChatUnread,
+  };
+
+  const renderScreen = (forceDetail=false) => {
+    // Mobile: detail view replaces the whole screen
+    if (forceDetail && detailView) {
+      if (detailView.type==='meetup') return <MeetupDetailV2 meetupId={detailView.id} joinedMeetups={joinedMeetups} onJoin={handleJoinMeetup} onClose={()=>setDetailView(null)}/>;
+      if (detailView.type==='group')  return <GroupDetailV2  groupId={detailView.id}  joinedGroups={joinedGroups}   onJoin={id=>{handleJoinGroup(id);}} onClose={()=>setDetailView(null)}/>;
+    }
+    if (tab==='home') return <HomeScreenV2 joinedMeetups={joinedMeetups} joinedGroups={joinedGroups} intPosts={intPosts} onJoinMeetup={handleJoinMeetup} onJoinGroup={handleJoinGroup} onPostInterest={handlePostInterest} onDetail={handleDetail} onTab={id=>sharedProps.setTab(id)}/>;
+    if (tab==='meet') return <MeetScreenV2 joinedMeetups={joinedMeetups} joinedGroups={joinedGroups} onJoinMeetup={handleJoinMeetup} onJoinGroup={handleJoinGroup} onDetail={handleDetail}/>;
+    if (tab==='chat') return <ChatScreenV2 activeChatId={activeChatId} setActiveChatId={setActiveChatId} joinedGroups={joinedGroups} groupMessages={groupMsgs} dmMessages={dmMsgs} dmConns={dmConns} onSend={handleSend}/>;
+    return <ProfileScreenV2 profile={MY_PROFILE} joinedGroups={joinedGroups}/>;
+  };
+
+  /* ── Mobile ── */
+  if (isMobile) return (
+    <React.Fragment>
+      <div className="stage">
+        <div className="phone">
+          <SBar/>
+          <div className="content">{renderScreen(true)}</div>
+          {(!detailView && !(tab==='chat' && activeChatId)) && (
+            <nav className="bnav">
+              {NAV.map(n => (
+                <button key={n.id} className="nbtn" onClick={()=>sharedProps.setTab(n.id)}>
+                  <div style={{ position:'relative' }}>
+                    <NavIco id={n.id} active={tab===n.id}/>
+                    {n.id==='chat' && totalChatUnread>0 && <div style={{ position:'absolute', top:-2, right:-2, width:8, height:8, borderRadius:'50%', background:'var(--coral-500)', border:'1.5px solid var(--surface-base)'}}/>}
+                  </div>
+                  <span className="nlbl" style={{ color: tab===n.id ? 'var(--coral-500)' : 'var(--neutral-400)' }}>{n.label}</span>
+                </button>
+              ))}
+            </nav>
+          )}
+        </div>
+      </div>
+      <Toast msg={toastMsg} isMobile={true}/>
+      <TweaksPanel>
+        <TweakSection label="Layout"/>
+        <TweakRadio label="View" value={t.view} options={['mobile','web']} onChange={v=>setTweak('view',v)}/>
+      </TweaksPanel>
+    </React.Fragment>
+  );
+
+  /* ── Web ── */
+  return (
+    <React.Fragment>
+      <div className="wlayout">
+        {/* Sidebar */}
+        <div className="wsidebar">
+          <div style={{ display:'flex', alignItems:'center', gap:10, padding:'4px 18px 24px' }}>
+            <div style={{ width:32, height:32, borderRadius:10, background:'var(--coral-500)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <svg width="19" height="19" viewBox="0 0 44 44" fill="none"><path d="M26 8C18 9 6 15 6 22C6 29 18 35 26 36" stroke="white" strokeWidth="8" fill="none" strokeLinecap="round"/><path d="M18 8C26 9 38 15 38 22C38 29 26 35 18 36" stroke="white" strokeWidth="8" fill="none" strokeLinecap="round"/></svg>
+            </div>
+            <span style={{ fontSize:21, fontWeight:800, letterSpacing:'-0.5px', color:'var(--text-primary)' }}>kindred</span>
+          </div>
+          <nav style={{ flex:1, padding:'0 0 8px', display:'flex', flexDirection:'column', gap:2 }}>
+            {NAV.map(n => (
+              <button key={n.id} onClick={()=>sharedProps.setTab(n.id)}
+                className={`snav${tab===n.id?' active':''}`}>
+                <NavIco id={n.id} active={tab===n.id}/>
+                <span style={{ flex:1 }}>{n.label}</span>
+                {n.id==='chat' && totalChatUnread>0 && (
+                  <span style={{ width:20, height:20, borderRadius:'50%', background:'var(--coral-500)',
+                    color:'#fff', fontSize:11, fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                    {totalChatUnread}
+                  </span>
+                )}
+              </button>
+            ))}
+          </nav>
+          <div style={{ padding:'14px 18px', borderTop:'1px solid var(--border-subtle)', display:'flex', alignItems:'center', gap:10 }}>
+            <div style={{ width:36, height:36, borderRadius:'50%', background:MY_PROFILE.gradient, flexShrink:0 }}/>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ fontSize:14, fontWeight:700, color:'var(--text-primary)' }}>{MY_PROFILE.name}</div>
+              <div style={{ fontSize:12, color:'var(--sage-400)', fontWeight:600 }}>● Available</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Center */}
+        <div className="wcenter">
+          {renderScreen(false)}
+        </div>
+
+        {/* Right panel */}
+        {tab !== 'me' && (
+          <div className="wright">
+            <div style={{ padding:'15px 20px', borderBottom:'1px solid var(--border-subtle)', flexShrink:0 }}>
+              <span style={{ fontSize:15, fontWeight:700, color:'var(--text-primary)' }}>
+                {detailView?.type==='meetup' ? 'Event details'
+                : detailView?.type==='group'  ? 'Group details'
+                : tab==='chat' && activeChatId ? (activeChatId.startsWith('group-')
+                    ? (window.KDv2.GROUPS.find(g=>g.id===parseInt(activeChatId.split('-')[1]))||{}).name
+                    : (dmConns.find(c=>c.id===parseInt(activeChatId.split('-')[1]))||{}).name)
+                : tab==='home' ? 'Explore'
+                : tab==='meet' ? 'Details'
+                : 'Messages'}
+              </span>
+            </div>
+            <WebRight tab={tab} detailView={detailView} activeChatId={activeChatId}
+              setActiveChatId={setActiveChatId}
+              joinedMeetups={joinedMeetups} joinedGroups={joinedGroups}
+              groupMessages={groupMsgs} dmMessages={dmMsgs} dmConns={dmConns}
+              onJoinMeetup={handleJoinMeetup} onJoinGroup={handleJoinGroup}
+              onSend={handleSend}/>
+          </div>
+        )}
+      </div>
+      <Toast msg={toastMsg} isMobile={false}/>
+      <TweaksPanel>
+        <TweakSection label="Layout"/>
+        <TweakRadio label="View" value={t.view} options={['mobile','web']} onChange={v=>setTweak('view',v)}/>
+      </TweaksPanel>
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

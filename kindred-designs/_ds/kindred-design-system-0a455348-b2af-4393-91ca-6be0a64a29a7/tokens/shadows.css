@@ -1,0 +1,51 @@
+/* ── Kindred Shadow Tokens ───────────────────────────────────────────── */
+
+:root {
+
+  /* ─ Elevation scale ─────────────────────────────────────────────── */
+  --shadow-none: none;
+
+  --shadow-xs:
+    0 1px 2px rgba(29, 45, 88, 0.04);
+
+  --shadow-sm:
+    0 1px 3px rgba(29, 45, 88, 0.06),
+    0 1px 2px rgba(29, 45, 88, 0.04);
+
+  --shadow-md:
+    0 4px 12px rgba(29, 45, 88, 0.08),
+    0 2px 4px  rgba(29, 45, 88, 0.05);
+
+  --shadow-lg:
+    0 8px 24px rgba(29, 45, 88, 0.10),
+    0 3px 8px  rgba(29, 45, 88, 0.06);
+
+  --shadow-xl:
+    0 16px 48px rgba(29, 45, 88, 0.12),
+    0 6px  16px rgba(29, 45, 88, 0.08);
+
+  --shadow-2xl:
+    0 24px 72px rgba(29, 45, 88, 0.16),
+    0 8px  24px rgba(29, 45, 88, 0.10);
+
+  /* ─ Semantic shadows ─────────────────────────────────────────────── */
+  --shadow-card:       var(--shadow-sm);
+  --shadow-card-hover: var(--shadow-md);
+  --shadow-dropdown:   var(--shadow-lg);
+  --shadow-modal:      var(--shadow-xl);
+  --shadow-toast:      var(--shadow-lg);
+
+  /* Profile card — warm coral tint for brand moments */
+  --shadow-profile:
+    0 12px 40px rgba(255, 87, 51, 0.12),
+    0 4px  16px rgba(29, 45, 88, 0.08);
+
+  /* ─ Inner shadows ────────────────────────────────────────────────── */
+  --shadow-inner:    inset 0 2px 4px rgba(29, 45, 88, 0.06);
+  --shadow-inner-sm: inset 0 1px 2px rgba(29, 45, 88, 0.04);
+
+  /* ─ Glow effects (celebration / brand moments) ───────────────────── */
+  --glow-primary:   0 0 28px rgba(255, 87, 51, 0.32);
+  --glow-secondary: 0 0 28px rgba(255, 191, 0,  0.32);
+  --glow-success:   0 0 20px rgba(34, 160, 99,  0.28);
+}

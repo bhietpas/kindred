@@ -1,0 +1,57 @@
+/* ── Kindred Motion Tokens ───────────────────────────────────────────── */
+
+:root {
+
+  /* ─ Easing curves ────────────────────────────────────────────────── */
+  --ease-linear:  linear;                                        /* @kind other */
+  --ease-smooth:  cubic-bezier(0.4, 0, 0.2, 1);                 /* @kind other */
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);            /* @kind other */
+  --ease-snap:    cubic-bezier(0.0, 0, 0.2, 1);                  /* @kind other */
+  --ease-in:      cubic-bezier(0.4, 0, 1, 1);                    /* @kind other */
+  --ease-out:     cubic-bezier(0, 0, 0.2, 1);                    /* @kind other */
+  --ease-bounce:  cubic-bezier(0.175, 0.885, 0.32, 1.275);       /* @kind other */
+
+  /* ─ Durations ────────────────────────────────────────────────────── */
+  --duration-instant:  50ms;   /* @kind other */
+  --duration-fast:    120ms;   /* @kind other */
+  --duration-normal:  200ms;   /* @kind other */
+  --duration-slow:    320ms;   /* @kind other */
+  --duration-slower:  480ms;   /* @kind other */
+  --duration-sluggish:640ms;   /* @kind other */
+
+  /* ─ Semantic transitions ─────────────────────────────────────────── */
+
+  /* Button: color + shadow snap, slight spring on press */
+  --transition-button:
+    color            var(--duration-fast)   var(--ease-smooth),
+    background-color var(--duration-fast)   var(--ease-smooth),
+    box-shadow       var(--duration-fast)   var(--ease-smooth),
+    transform        var(--duration-fast)   var(--ease-spring);
+
+  /* Card: lift on hover with spring */
+  --transition-card:
+    transform  var(--duration-normal) var(--ease-spring),
+    box-shadow var(--duration-normal) var(--ease-smooth);
+
+  /* Input: focus ring and border */
+  --transition-input:
+    border-color var(--duration-fast) var(--ease-smooth),
+    box-shadow   var(--duration-fast) var(--ease-smooth);
+
+  /* Switch: smooth slide */
+  --transition-switch:
+    background-color var(--duration-normal) var(--ease-smooth),
+    transform        var(--duration-normal) var(--ease-spring);
+
+  /* Fade in/out */
+  --transition-fade:
+    opacity var(--duration-normal) var(--ease-smooth);
+
+  /* Slide (modals, sheets, toasts) */
+  --transition-slide:
+    transform var(--duration-slow) var(--ease-snap);
+
+  /* Profile card swipe */
+  --transition-swipe:
+    transform var(--duration-slow) var(--ease-bounce);
+}

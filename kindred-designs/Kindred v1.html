@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kindred — Find your people</title>
+
+<link rel="stylesheet" href="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/tokens/colors.css">
+<link rel="stylesheet" href="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/tokens/typography.css">
+<link rel="stylesheet" href="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/tokens/shadows.css">
+<link rel="stylesheet" href="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/tokens/motion.css">
+<link rel="stylesheet" href="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/styles.css">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+
+  /* ── Mobile stage ── */
+  .mobile-stage {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at 30% 20%, #2A1260 0%, #0D1226 50%, #050810 100%);
+    padding: 28px;
+  }
+  .phone {
+    width: 390px; height: 844px;
+    background: var(--surface-base);
+    border-radius: 50px; overflow: hidden;
+    box-shadow: 0 0 0 10px #1c1c1e, 0 0 0 12px #3a3a3c,
+                0 32px 80px rgba(0,0,0,0.7), 0 8px 24px rgba(0,0,0,0.4);
+    display: flex; flex-direction: column; position: relative; flex-shrink: 0;
+  }
+  .status-bar {
+    height: 50px; flex-shrink: 0;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 28px 8px;
+    background: var(--surface-base); z-index: 10; position: relative;
+  }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.3px; }
+  .status-icons { display: flex; align-items: center; gap: 5px; color: var(--text-primary); }
+  .content-area { flex: 1; overflow: hidden; display: flex; flex-direction: column; background: var(--surface-base); }
+  .bottom-nav {
+    height: 82px; flex-shrink: 0;
+    background: var(--surface-raised); border-top: 1px solid var(--border-subtle);
+    display: flex; align-items: flex-start; justify-content: space-around; padding-top: 10px;
+  }
+  .nav-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    cursor: pointer; padding: 2px 18px; border: none; background: none;
+    font-family: var(--font-sans);
+    transition: transform 0.12s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .nav-btn:active { transform: scale(0.84); }
+  .nav-label { font-size: 10px; font-weight: 600; }
+
+  /* ── Web layout ── */
+  .web-layout {
+    display: flex; height: 100vh; overflow: hidden;
+    background: var(--neutral-100);
+  }
+  .web-sidebar {
+    width: 256px; flex-shrink: 0;
+    background: var(--surface-raised); border-right: 1px solid var(--border-subtle);
+    display: flex; flex-direction: column; padding: 20px 0 0;
+  }
+  .web-center { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .web-right {
+    width: 360px; flex-shrink: 0;
+    background: var(--surface-raised); border-left: 1px solid var(--border-subtle);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .snav-item {
+    display: flex; align-items: center; gap: 11px;
+    padding: 11px 18px; cursor: pointer; border: none; background: none;
+    width: 100%; font-family: var(--font-sans); font-size: 15px; font-weight: 500;
+    color: var(--text-secondary); text-align: left; transition: all 0.13s;
+    border-radius: 10px; margin: 0 8px; width: calc(100% - 16px);
+  }
+  .snav-item:hover { background: var(--neutral-100); color: var(--text-primary); }
+  .snav-item.active { background: var(--coral-50); color: var(--coral-600); font-weight: 600; }
+
+  /* ── Shared ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--neutral-300); border-radius: 2px; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="_ds/kindred-design-system-0a455348-b2af-4393-91ca-6be0a64a29a7/_ds_bundle.js"></script>
+<script src="kindred-data.js"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="kindred-screens.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+const { CONNECTIONS, REQUESTS, MESSAGES, MY_PROFILE, PROFILES } = window.KD;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "view": "mobile",
+  "onboarding": false,
+  "accent": "#FF5733"
+}/*EDITMODE-END*/;
+
+/* ── Nav config ───────────────────────────────────────────────── */
+function NavIcon({ id, active, color }) {
+  const c = active ? color : 'var(--neutral-400)';
+  if (id === 'discover') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>;
+  if (id === 'people')   return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+  return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
+}
+const NAV = [
+  { id:'discover', label:'Discover' },
+  { id:'people',   label:'People' },
+  { id:'profile',  label:'Profile' },
+];
+
+/* ── Toast ─────────────────────────────────────────────────────── */
+function AppToast({ toast, isMobile }) {
+  const [vis, setVis] = useState(false);
+  useEffect(() => {
+    if (!toast) { setVis(false); return; }
+    const t = setTimeout(() => setVis(true), 10);
+    return () => clearTimeout(t);
+  }, [toast]);
+  if (!toast) return null;
+  const isMatch = toast.type === 'match';
+  return (
+    <div style={{
+      position:'fixed', bottom: isMobile ? 94 : 24, left:'50%',
+      transform:`translateX(-50%) translateY(${vis ? 0 : 28}px)`,
+      opacity: vis ? 1 : 0,
+      transition:'transform 0.38s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s',
+      zIndex:9999, pointerEvents:'none'
+    }}>
+      <div style={{
+        padding:'12px 22px', borderRadius:99,
+        background: isMatch ? 'var(--coral-500)' : 'rgba(13,18,38,0.92)',
+        color:'#fff', fontSize:15, fontWeight:600,
+        boxShadow: isMatch ? '0 8px 28px rgba(255,87,51,0.45)' : '0 8px 28px rgba(0,0,0,0.30)',
+        display:'flex', alignItems:'center', gap:9, whiteSpace:'nowrap',
+        backdropFilter:'blur(12px)'
+      }}>
+        <span style={{ fontSize:18 }}>{isMatch ? '🎉' : toast.type==='wave' ? '👋' : '♥'}</span>
+        <span>{isMatch ? `It's a match! You and ${toast.person.name} are connected` :
+               toast.type==='wave' ? `Wave sent to ${toast.person.name}` :
+               `Connection request sent to ${toast.person.name}`}</span>
+      </div>
+    </div>
+  );
+}
+
+/* ── Status bar ────────────────────────────────────────────────── */
+function StatusBar() {
+  return (
+    <div className="status-bar">
+      <span className="status-time">9:41</span>
+      <div className="status-icons">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="6" width="3" height="6" rx="0.5" opacity="0.4"/><rect x="4" y="4" width="3" height="8" rx="0.5" opacity="0.6"/><rect x="8" y="2" width="3" height="10" rx="0.5" opacity="0.8"/><rect x="12" y="0" width="3" height="12" rx="0.5"/></svg>
+        <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M7.5 3C9.8 3 11.9 3.9 13.4 5.4M1.6 5.4C3.1 3.9 5.2 3 7.5 3" opacity="0.4"/><path d="M7.5 6C8.9 6 10.1 6.6 11 7.5M4 7.5C4.9 6.6 6.1 6 7.5 6" opacity="0.7"/><circle cx="7.5" cy="10" r="1" fill="currentColor" stroke="none"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" strokeOpacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><path d="M23 4.5v3a1.5 1.5 0 0 0 0-3z" fill="currentColor" opacity="0.4"/></svg>
+      </div>
+    </div>
+  );
+}
+
+/* ── Web Right Panel ───────────────────────────────────────────── */
+function WebRight({ tab, chatId, setChatId, connections, messages, onSend }) {
+  if (tab === 'profile') return null;
+
+  const headerLabel = tab === 'discover' ? 'Explore nearby'
+    : chatId ? (connections.find(c => c.id === chatId) || {}).name || 'Chat'
+    : 'Messages';
+
+  return (
+    <div className="web-right">
+      <div style={{ padding:'16px 20px', borderBottom:'1px solid var(--border-subtle)', flexShrink:0 }}>
+        <span style={{ fontSize:15, fontWeight:700, color:'var(--text-primary)' }}>{headerLabel}</span>
+      </div>
+
+      {tab === 'discover' && (
+        <div style={{ flex:1, overflowY:'auto', padding:'16px 16px 24px' }}>
+          <p style={{ fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', color:'var(--text-tertiary)', marginBottom:12 }}>Coming up</p>
+          {PROFILES.slice(1, 5).map(p => (
+            <div key={p.id} style={{ display:'flex', alignItems:'center', gap:12, padding:'10px 12px',
+              borderRadius:14, cursor:'pointer', marginBottom:6, transition:'background 0.13s' }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-base)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+              <div style={{ width:46, height:46, borderRadius:14, background:p.gradient, flexShrink:0 }}/>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:14, fontWeight:700, color:'var(--text-primary)' }}>{p.name}, {p.age}</div>
+                <div style={{ fontSize:12, color:'var(--text-tertiary)', marginBottom:3 }}>{p.city} · {p.distance}</div>
+                {p.mutual > 0 && <div style={{ fontSize:11, fontWeight:600, color:'var(--coral-500)' }}>✦ {p.mutual} in common</div>}
+              </div>
+            </div>
+          ))}
+
+          <p style={{ fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', color:'var(--text-tertiary)', margin:'20px 0 12px' }}>Nearby this week</p>
+          {[
+            { label:'Coffee crawl · Williamsburg', time:'Sat 10am', n:4,  dot:'var(--amber-400)' },
+            { label:'Hiking · Prospect Park',      time:'Sun 8am',  n:7,  dot:'var(--sage-400)' },
+            { label:'Game night · Bushwick',       time:'Fri 7pm',  n:5,  dot:'var(--navy-400)' },
+            { label:'Jazz at Nublu · Alphabet City',time:'Sat 9pm', n:3,  dot:'var(--coral-400)' },
+          ].map(ev => (
+            <div key={ev.label} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px',
+              borderRadius:12, cursor:'pointer', marginBottom:6, transition:'background 0.13s' }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-base)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+              <div style={{ width:8, height:8, borderRadius:'50%', background:ev.dot, flexShrink:0 }}/>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:13, fontWeight:600, color:'var(--text-primary)', marginBottom:1 }}>{ev.label}</div>
+                <div style={{ fontSize:11, color:'var(--text-tertiary)' }}>{ev.time} · {ev.n} going</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab === 'people' && chatId && (
+        <ChatScreen personId={chatId} connections={connections} messages={messages}
+          onBack={() => setChatId(null)} onSend={onSend}/>
+      )}
+      {tab === 'people' && !chatId && (
+        <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center',
+          justifyContent:'center', padding:40, textAlign:'center' }}>
+          <div style={{ fontSize:44, marginBottom:14 }}>💬</div>
+          <div style={{ fontSize:16, fontWeight:600, color:'var(--text-secondary)', marginBottom:8 }}>Select a conversation</div>
+          <div style={{ fontSize:14, color:'var(--text-tertiary)', lineHeight:1.6 }}>Choose a friend from the list to start chatting.</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Web layout shell ──────────────────────────────────────────── */
+function WebApp({ tab, setTab, chatId, setChatId, connections, requests, messages, profile,
+                  onToast, onAccept, onDecline, onSend, accent }) {
+  const color = accent || 'var(--coral-500)';
+  const totalUnread = connections.reduce((s, c) => s + c.unread, 0);
+
+  return (
+    <div className="web-layout">
+
+      {/* Sidebar */}
+      <div className="web-sidebar">
+        {/* Logo */}
+        <div style={{ display:'flex', alignItems:'center', gap:10, padding:'4px 18px 24px' }}>
+          <div style={{ width:34, height:34, borderRadius:11, background:color, display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <svg width="20" height="20" viewBox="0 0 44 44" fill="none"><path d="M26 8C18 9 6 15 6 22C6 29 18 35 26 36" stroke="white" strokeWidth="8" fill="none" strokeLinecap="round"/><path d="M18 8C26 9 38 15 38 22C38 29 26 35 18 36" stroke="white" strokeWidth="8" fill="none" strokeLinecap="round"/></svg>
+          </div>
+          <span style={{ fontSize:22, fontWeight:800, letterSpacing:'-0.5px', color:'var(--text-primary)' }}>kindred</span>
+        </div>
+
+        {/* Nav */}
+        <nav style={{ flex:1, padding:'0 0 8px', display:'flex', flexDirection:'column', gap:2 }}>
+          {NAV.map(n => {
+            const isActive = tab === n.id;
+            return (
+              <button key={n.id} onClick={() => { setTab(n.id); setChatId(null); }}
+                className={`snav-item${isActive ? ' active' : ''}`}>
+                <NavIcon id={n.id} active={isActive} color={color}/>
+                <span style={{ flex:1 }}>{n.label}</span>
+                {n.id === 'people' && totalUnread > 0 && (
+                  <span style={{ width:20, height:20, borderRadius:'50%', background:color,
+                    color:'#fff', fontSize:11, fontWeight:700,
+                    display:'flex', alignItems:'center', justifyContent:'center' }}>{totalUnread}</span>
+                )}
+                {n.id === 'people' && requests.length > 0 && totalUnread === 0 && (
+                  <span style={{ fontSize:11, fontWeight:700, color:color }}>{requests.length} new</span>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Profile snippet */}
+        <div style={{ padding:'14px 18px', borderTop:'1px solid var(--border-subtle)',
+          display:'flex', alignItems:'center', gap:10 }}>
+          <div style={{ width:38, height:38, borderRadius:'50%', background:profile.gradient, flexShrink:0 }}/>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontSize:14, fontWeight:700, color:'var(--text-primary)',
+              overflow:'hidden', whiteSpace:'nowrap', textOverflow:'ellipsis' }}>{profile.name}</div>
+            <div style={{ fontSize:12, color:'var(--sage-400)', fontWeight:600 }}>● Available</div>
+          </div>
+          <button style={{ background:'none', border:'none', cursor:'pointer', padding:4, color:'var(--text-tertiary)' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Center */}
+      <div className="web-center">
+        {tab === 'discover' && <DiscoverScreen accent={accent} onToast={onToast}/>}
+        {tab === 'people'   && <PeopleScreen connections={connections} requests={requests}
+          onChat={id => { setChatId(id); }}
+          onAccept={onAccept} onDecline={onDecline}/>}
+        {tab === 'profile'  && <ProfileScreen profile={profile}/>}
+      </div>
+
+      {/* Right panel */}
+      {tab !== 'profile' && (
+        <WebRight tab={tab} chatId={chatId} setChatId={setChatId}
+          connections={connections} messages={messages} onSend={onSend}/>
+      )}
+    </div>
+  );
+}
+
+/* ── Mobile layout shell ───────────────────────────────────────── */
+function MobileApp({ tab, setTab, chatId, setChatId, connections, requests, messages, profile,
+                     onToast, onAccept, onDecline, onSend, accent }) {
+  const color = accent || 'var(--coral-500)';
+
+  const screen = () => {
+    if (chatId) return (
+      <ChatScreen personId={chatId} connections={connections} messages={messages}
+        onBack={() => setChatId(null)} onSend={onSend}/>
+    );
+    if (tab === 'discover') return <DiscoverScreen accent={accent} onToast={onToast}/>;
+    if (tab === 'people')   return <PeopleScreen connections={connections} requests={requests}
+      onChat={setChatId} onAccept={onAccept} onDecline={onDecline}/>;
+    return <ProfileScreen profile={profile}/>;
+  };
+
+  return (
+    <div className="mobile-stage">
+      <div className="phone">
+        <StatusBar/>
+        <div className="content-area">{screen()}</div>
+        {!chatId && (
+          <nav className="bottom-nav">
+            {NAV.map(n => (
+              <button key={n.id} className={`nav-btn${tab===n.id?' active':''}`} onClick={() => setTab(n.id)}>
+                <NavIcon id={n.id} active={tab===n.id} color={color}/>
+                <span className="nav-label" style={{ color: tab===n.id ? color : 'var(--neutral-400)' }}>{n.label}</span>
+              </button>
+            ))}
+          </nav>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Onboarding shell ──────────────────────────────────────────── */
+function OnboardShell({ isMobile, onDone }) {
+  if (isMobile) {
+    return (
+      <div className="mobile-stage">
+        <div className="phone">
+          <StatusBar/>
+          <div className="content-area">
+            <OnboardingFlow onComplete={onDone}/>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div style={{ height:'100vh', background:'var(--neutral-100)',
+      display:'flex', alignItems:'center', justifyContent:'center' }}>
+      <div style={{ width:440, height:820, background:'var(--surface-base)',
+        borderRadius:24, overflow:'hidden', boxShadow:'var(--shadow-xl)',
+        display:'flex', flexDirection:'column' }}>
+        <OnboardingFlow onComplete={onDone}/>
+      </div>
+    </div>
+  );
+}
+
+/* ── Root App ──────────────────────────────────────────────────── */
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  const isMobile = t.view === 'mobile';
+  const accent   = t.accent || 'var(--coral-500)';
+
+  const [phase,    setPhase]  = useState(t.onboarding ? 'onboarding' : 'app');
+  const [tab,      setTab]    = useState('discover');
+  const [chatId,   setChatId] = useState(null);
+  const [conns,    setConns]  = useState([...CONNECTIONS]);
+  const [reqs,     setReqs]   = useState([...REQUESTS]);
+  const [msgs,     setMsgs]   = useState({ ...MESSAGES });
+  const [toast,    setToast]  = useState(null);
+  const toastRef = useRef(null);
+
+  useEffect(() => { setPhase(t.onboarding ? 'onboarding' : 'app'); }, [t.onboarding]);
+
+  const showToast = (type, person) => {
+    clearTimeout(toastRef.current);
+    setToast({ type, person });
+    toastRef.current = setTimeout(() => setToast(null), 3400);
+  };
+
+  const handleAccept = id => {
+    const r = reqs.find(x => x.id === id);
+    if (!r) return;
+    setConns(p => [...p, { id:r.id, name:r.name, city:r.city, mutual:r.mutual,
+      gradient:r.gradient, active:'Active now', unread:1, lastMsg:r.note }]);
+    setReqs(p => p.filter(x => x.id !== id));
+    setMsgs(p => ({ ...p, [id]: [{ from:'them', text:r.note, time:'Just now' }] }));
+    showToast('match', r);
+  };
+
+  const handleDecline = id => setReqs(p => p.filter(x => x.id !== id));
+
+  const handleSend = (personId, text) => {
+    setMsgs(p => ({ ...p, [personId]: [...(p[personId] || []), { from:'me', text, time:'Now' }] }));
+    setConns(p => p.map(c => c.id === personId ? { ...c, unread:0, lastMsg:text } : c));
+  };
+
+  const sharedProps = {
+    tab, setTab, chatId, setChatId,
+    connections: conns, requests: reqs, messages: msgs, profile: MY_PROFILE,
+    onToast: showToast, onAccept: handleAccept, onDecline: handleDecline, onSend: handleSend,
+    accent,
+  };
+
+  return (
+    <React.Fragment>
+      {phase === 'onboarding'
+        ? <OnboardShell isMobile={isMobile} onDone={() => setPhase('app')}/>
+        : isMobile
+          ? <MobileApp {...sharedProps}/>
+          : <WebApp    {...sharedProps}/>
+      }
+
+      <AppToast toast={toast} isMobile={isMobile}/>
+
+      <TweaksPanel>
+        <TweakSection label="Layout"/>
+        <TweakRadio   label="View" value={t.view} options={['mobile','web']}
+                      onChange={v => setTweak('view', v)}/>
+        <TweakToggle  label="Start from onboarding" value={t.onboarding}
+                      onChange={v => setTweak('onboarding', v)}/>
+        <TweakSection label="Brand"/>
+        <TweakColor   label="Accent" value={t.accent}
+                      options={['#FF5733','#FFBF00','#22A063','#5B2FD4']}
+                      onChange={v => setTweak('accent', v)}/>
+      </TweaksPanel>
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

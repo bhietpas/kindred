@@ -1,0 +1,49 @@
+/* ============================================================
+   Drift Bound — Elevation: radii, borders, shadows, glow
+   ------------------------------------------------------------
+   On dark surfaces, depth comes from a hairline bone border +
+   a soft ambient shadow, occasionally a candlelit ember glow
+   for active/GM elements. Corners are gently rounded, never
+   pill-bubbly except on chips and avatars.
+   ============================================================ */
+
+:root {
+  /* ---- Radii ---- */
+  --radius-xs:  4px;
+  --radius-sm:  7px;
+  --radius-md:  11px;   /* default control / card */
+  --radius-lg:  16px;
+  --radius-xl:  22px;
+  --radius-2xl: 28px;
+  --radius-pill: 999px;
+
+  /* ---- Border widths ---- */
+  --border-hairline: 1px;
+  --border-thick: 1.5px;
+
+  /* ---- Ambient shadows (cool, for dark surfaces) ---- */
+  --shadow-sm:  0 1px 2px rgba(3, 6, 14, 0.55);
+  --shadow-md:  0 6px 18px -6px rgba(3, 6, 14, 0.70);
+  --shadow-lg:  0 18px 40px -12px rgba(3, 6, 14, 0.80);
+  --shadow-pop: 0 24px 60px -16px rgba(3, 6, 14, 0.88);
+
+  /* ---- Inner seam (top bone highlight on raised cards) ---- */
+  --seam-top: inset 0 1px 0 rgba(250, 246, 236, 0.06); /* @kind shadow */
+
+  /* ---- Candlelight glows (active / focus / GM) ---- */
+  --glow-ember: 0 0 0 1px rgba(226, 119, 43, 0.40), 0 8px 28px -8px rgba(226, 119, 43, 0.45);
+  --glow-drift: 0 0 0 1px rgba(43, 183, 166, 0.40), 0 8px 28px -8px rgba(43, 183, 166, 0.40);
+  --glow-soft:  0 0 24px -6px rgba(226, 119, 43, 0.30);
+
+  /* ---- Focus ring ---- */
+  --ring: 0 0 0 3px var(--focus-ring);
+
+  /* ---- Motion ---- */
+  --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);  /* @kind other */
+  --ease-in-out:cubic-bezier(0.65, 0, 0.35, 1);  /* @kind other */
+  --ease-drift: cubic-bezier(0.33, 0.9, 0.2, 1); /* @kind other */
+  --dur-fast:   120ms;  /* @kind other */
+  --dur-base:   200ms;  /* @kind other */
+  --dur-slow:   360ms;  /* @kind other */
+  --dur-drift:  600ms;  /* @kind other */
+}

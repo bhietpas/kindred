@@ -1,0 +1,22 @@
+/* ============================================================
+   Drift Bound — Webfonts
+   ------------------------------------------------------------
+   Loaded from Google Fonts CDN. To self-host, download the
+   four families below and replace this @import with local
+   @font-face rules pointing at assets/fonts/*.woff2.
+
+   Families:
+     Cormorant Garamond — display / wordmark (high-contrast serif)
+     Spectral           — narrative prose & long-form reading
+     Hanken Grotesk     — UI: labels, buttons, nav, data
+     JetBrains Mono     — dice, stats, tokens, timestamps
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --font-display: 'Cormorant Garamond', 'Hoefler Text', Georgia, serif;
+  --font-narrative: 'Spectral', 'Iowan Old Style', Georgia, serif;
+  --font-ui: 'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}

@@ -1,0 +1,52 @@
+/* ============================================================
+   Drift Bound — Base resets & element defaults
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg-app);
+  color: var(--text-body);
+  font-family: var(--font-ui);
+  font-size: var(--text-md);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  color: var(--text-strong);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+
+p { margin: 0; }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+a:hover { color: var(--drift-200); }
+
+button { font-family: inherit; }
+
+::selection {
+  background: rgba(226, 119, 43, 0.30);
+  color: var(--bone-50);
+}
+
+/* Atmospheric backdrop helper — a faint vignette + ink wash.
+   Apply to a full-bleed app shell for the "table at night" feel. */
+.db-backdrop {
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(43, 183, 166, 0.07), transparent 60%),
+    radial-gradient(90% 60% at 100% 0%, rgba(226, 119, 43, 0.06), transparent 55%),
+    var(--bg-app);
+}

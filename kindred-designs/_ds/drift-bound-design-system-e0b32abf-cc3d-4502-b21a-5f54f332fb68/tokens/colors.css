@@ -1,0 +1,117 @@
+/* ============================================================
+   Drift Bound — Color
+   ------------------------------------------------------------
+   "A navigator's grimoire": midnight ink surfaces, warm bone
+   text, candlelit ember primary, aurora drift accent. Dark is
+   the home theme; a parchment reading surface is provided for
+   long prose.
+   ============================================================ */
+
+:root {
+  /* ---- Ink (cool midnight indigo — surfaces, dark theme) ---- */
+  --ink-950: #070A12;   /* abyss — deepest backdrop */
+  --ink-900: #0A0E1A;   /* app background */
+  --ink-850: #0E1322;   /* deep panel */
+  --ink-800: #131A2E;   /* surface */
+  --ink-700: #1A2238;   /* raised card */
+  --ink-600: #232E4A;   /* overlay / popover */
+  --ink-500: #303D5E;   /* strong border */
+  --ink-400: #475574;   /* border / divider on dark */
+
+  /* ---- Bone (warm parchment — text on dark, light theme) ---- */
+  --bone-50:  #FAF6EC;  /* brightest text / parchment hi */
+  --bone-100: #F2EBDA;  /* parchment surface */
+  --bone-200: #E6DBC2;  /* parchment edge */
+  --bone-300: #CdBfa0;  /* muted parchment */
+  --bone-400: #9aa2b8;  /* cool muted text on dark */
+  --bone-500: #6f7896;  /* faint text on dark */
+
+  /* ---- Ember (primary — candlelight, GM presence, CTAs) ---- */
+  --ember-50:  #FBEFE3;
+  --ember-200: #F4C79C;
+  --ember-400: #EC8B45;
+  --ember-500: #E2772B;  /* primary */
+  --ember-600: #C8631D;  /* hover / pressed */
+  --ember-700: #A04E16;
+
+  /* ---- Drift (secondary — exploration, reveal, links) ---- */
+  --drift-200: #AEEDE4;
+  --drift-400: #4FD0C0;
+  --drift-500: #2BB7A6;  /* accent */
+  --drift-600: #1E9183;
+
+  /* ---- Brass (highlight, dice crit, ornament) ---- */
+  --brass-300: #E6CB86;
+  --brass-500: #D2AC55;
+  --brass-600: #B08C3C;
+
+  /* ---- Whisper (violet — private/whisper visibility) ---- */
+  --whisper-400: #A88BE6;
+  --whisper-500: #8E6FD6;
+
+  /* ---- Semantic status ---- */
+  --rose-500:  #E05656;  /* danger / combat / harm */
+  --rose-600:  #C53F3F;
+  --sage-500:  #6FBF73;  /* success / resolved */
+  --sage-600:  #549457;
+  --amber-warn:#E2B33B;  /* warning / pending */
+
+  /* ============================================================
+     Semantic aliases — DARK theme (default)
+     ============================================================ */
+  --bg-app:        var(--ink-900);
+  --bg-deep:       var(--ink-850);
+  --surface:       var(--ink-800);
+  --surface-raised:var(--ink-700);
+  --surface-overlay:var(--ink-600);
+
+  --border:        rgba(231, 219, 194, 0.10);  /* bone hairline */
+  --border-strong: rgba(231, 219, 194, 0.18);
+  --border-ember:  rgba(226, 119, 43, 0.45);
+
+  --text-strong:   var(--bone-50);
+  --text-body:     #DAD2C0;
+  --text-muted:    var(--bone-400);
+  --text-faint:    var(--bone-500);
+  --text-on-ember: #1C1206;
+  --text-on-drift: #042320;
+
+  --primary:       var(--ember-500);
+  --primary-hover: var(--ember-600);
+  --accent:        var(--drift-500);
+  --accent-hover:  var(--drift-600);
+  --highlight:     var(--brass-500);
+
+  --link:          var(--drift-400);
+
+  /* visibility scope colors (domain: public / gm / whisper) */
+  --scope-public:  var(--drift-400);
+  --scope-gm:      var(--ember-400);
+  --scope-whisper: var(--whisper-400);
+
+  /* zone distance ramp (Close → Distant) */
+  --zone-close:    var(--ember-400);
+  --zone-near:     var(--brass-300);
+  --zone-far:      var(--drift-400);
+  --zone-distant:  var(--bone-500);
+
+  --focus-ring:    rgba(79, 208, 192, 0.55);
+}
+
+/* ============================================================
+   Parchment reading surface — opt-in via .surface-parchment
+   For long-form Turn prose / session logs.
+   ============================================================ */
+.surface-parchment {
+  --surface:       var(--bone-100);
+  --surface-raised:var(--bone-50);
+  --border:        rgba(60, 46, 24, 0.14);
+  --border-strong: rgba(60, 46, 24, 0.24);
+  --text-strong:   #241B0E;
+  --text-body:     #3A2E1C;
+  --text-muted:    #6F5C3E;
+  --text-faint:    #927B57;
+  --link:          var(--drift-600);
+  background: var(--bone-100);
+  color: var(--text-body);
+}
