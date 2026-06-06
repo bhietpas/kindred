@@ -24,8 +24,9 @@ class HealthCheckIT {
             .parse("postgis/postgis:16-3.4")
             .asCompatibleSubstituteFor("postgres");
 
+    @SuppressWarnings("resource")
     @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(POSTGIS_IMAGE)
+    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(POSTGIS_IMAGE)
             .withDatabaseName("kindred")
             .withUsername("kindred")
             .withPassword("kindred");

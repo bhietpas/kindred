@@ -15,12 +15,6 @@ _(none — pull the next item)_
 
 ## Up Next (do not start until pulled into In Progress)
 
-- [ ] **T2 — Domain model (pure)**
-  In `kindred-domain`: `User`, `Profile`, `GeoLocation` (value object),
-  `InterestTag`, `Connection`, `MatchScore`, `MatchCandidate`. Records for value
-  objects. A `sealed interface ProfileError`. No framework imports. Unit tests
-  for any validation logic (e.g. GeoLocation rejects out-of-range coordinates).
-
 - [ ] **T3 — Database migrations**
   Flyway in `kindred-app`. `V1` users, `V2` profiles (interest tags as text[]),
   `V3` enable PostGIS + add location point column to profiles, `V4` connections.
@@ -67,4 +61,6 @@ _(none — pull the next item)_
 
 ## Done
 
+- [x] **T3 — Database migrations** — V1 users, V2 profiles (interests as text[], age check), V3 PostGIS extension + geography(point) column + GIST index, V4 connections (no-self-connect + unique-pair constraints). Dev seed in `db/seed/V5` (20 Brooklyn profiles, active in dev profile only). 5 SchemaIT tests verify inserts, PostGIS point, and self-connect rejection.
+- [x] **T2 — Domain model (pure)** — 7 types, all records/sealed interfaces, zero framework imports. 16 unit tests green (GeoLocation bounds, InterestTag blank/null, MatchScore range). `MatchCandidate` implements `Comparable` for score-desc sort.
 - [x] **T1 — Monorepo scaffold** — `./gradlew build` green; Spring Boot 3.5.0 (3.3.x EOL'd on Initializr), Gradle 8.14.5 via wrapper + Foojay toolchain resolver (auto-downloads JDK 21). `HealthCheckIT` spins up real PostGIS 16 via Testcontainers, hits `/actuator/health`, passes.
