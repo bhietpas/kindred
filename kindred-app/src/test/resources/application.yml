@@ -13,9 +13,13 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          # TODO: set CLERK_JWKS_URI env var before deploying.
-          # Value is https://<your-clerk-domain>.clerk.accounts.dev/.well-known/jwks.json
           jwks-uri: ${CLERK_JWKS_URI:https://placeholder.invalid/.well-known/jwks.json}
+  main:
+    # Lets nested @TestConfiguration in IT tests register a jwtDecoder bean
+    # that overrides the one in SecurityConfig.  HealthCheckIT and SchemaIT
+    # have no nested @TestConfiguration, so they simply use the production decoder
+    # (which is never actually invoked because their tested endpoints don't require auth).
+    allow-bean-definition-overriding: true
 
 management:
   endpoints:
