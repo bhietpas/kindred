@@ -15,29 +15,88 @@ refactored), update this file, then STOP and wait. Do not pull the next item you
 
 ## Up Next (do not start until pulled into In Progress)
 
-- [ ] **T9 — Input validation**
-  Add `spring-boot-starter-validation` and annotate all request records with Bean
-  Validation constraints (`@NotBlank`, `@Size`, `@Min`/`@Max`, `@DecimalMin` etc.).
-  Validate in controllers with `@Valid`. Map `MethodArgumentNotValidException` to a
-  structured 400 response (reuse the existing error-body format: `code` + `message` +
-  optional `fields` list). Add unit/integration tests for at least one invalid-input
-  case per endpoint. Domain use cases should still do their own guard checks — Bean
-  Validation is an edge filter, not a substitute for domain rules.
+Ordered by shortest path to a complete match→connect loop in front of 5 real users;
+ties broken by technical risk retired. Every slice below is verifiable end-to-end by
+automated tests (domain unit tests + Testcontainers ITs). The one standing gap that
+needs **human review** before the pilot: the real Clerk JWKS path — ITs substitute a
+pass-through `JwtDecoder`, so verify token validation against live Clerk manually once.
 
-- [ ] **T10 — Pagination on matches**
-  Replace the unbounded list returned by `GET /api/v1/matches` with a page-based
-  response. Use cursor-based pagination (a `nextCursor` token) rather than
-  offset/page-number — safer for real-time data. The cursor encodes the last-seen
-  score + profile ID so the next page can pick up cleanly. Return a wrapper:
-  `{ "matches": [...], "nextCursor": "..." | null }`. Update `FindMatches` use case
-  and the PostGIS adapter to accept a limit and cursor. Default page size: 20, max: 50.
-  Update `MatchControllerIT` to assert the response shape and that `nextCursor` is
-  present when results exist.
+- [ ] **T9 — Actionable connections list**
+  *Outcome:* Listing my connections shows who the other person is and whether each
+  request is incoming or outgoing, so I can act on pending requests.
+  *Acceptance:*
+  - As recipient of a PENDING request, `GET /api/v1/connections` item has
+    `direction: "incoming"` and `otherProfile.name` equal to the requester's name.
+  - The same connection fetched as the requester has `direction: "outgoing"` and
+    `otherProfile` = the recipient's summary.
+  - `otherProfile` contains profileId, name, age, city, interests — and **no**
+    latitude/longitude.
+  - A connection whose counterpart profile no longer exists is still returned, with
+    `otherProfile: null`.
+  - Existing status-filter ITs stay green.
+  *Layers:* domain (`ListConnections` returns connection + other-profile pairs via
+  the existing `ProfileRepository` port), web (new response record), IT.
+  *Out of scope:* pagination, sorting, contact handle, match-card changes.
+
+- [ ] **T10 — Fetch my own profile (`GET /api/v1/profiles/me`)**
+  *Outcome:* A signed-in user can fetch their own profile — or learn they don't have
+  one yet — without knowing any IDs.
+  *Acceptance:*
+  - Authenticated user with a profile → 200 + their `ProfileResponse`.
+  - Authenticated user with no profile (or no users row) → 404 `PROFILE_NOT_FOUND`.
+  - Unauthenticated → 401.
+  *Layers:* web only (reuse `UserLookup` + `ProfileRepository.findByUserId`, same
+  composition as `MatchController`).
+  *Out of scope:* `/me` aliases for PUT/DELETE; any change to POST/PUT semantics.
+
+- [ ] **T11 — Safe, stateful match cards**
+  *Outcome:* Match results show distance and whether a request is already pending —
+  and never reveal anyone's exact coordinates.
+  *Acceptance:*
+  - Match response JSON contains no `location`/`latitude`/`longitude` for candidates.
+  - Each candidate has `distanceMiles`; a known two-point fixture asserts the
+    expected miles within tolerance (pure haversine on `GeoLocation` in the domain —
+    unit-testable; display-only precision).
+  - A candidate with a PENDING connection (either direction) carries
+    `pendingConnectionId`; others null.
+  - Score-descending order unchanged.
+  *Layers:* domain (`MatchCandidate`/`FindMatches` gain distance + pending
+  annotation via the existing `ConnectionRepository`), web (`MatchCandidateResponse`
+  reshaped, stops embedding full `ProfileResponse`), IT.
+  *Out of scope:* excluding pending candidates from results, pagination,
+  scoring-weight changes.
+
+- [ ] **T12 — Contact reveal on accept**
+  *Outcome:* Once a connection is accepted, each side sees the other's contact
+  handle, so connected users can actually reach each other.
+  *Acceptance:*
+  - Migration V6 adds nullable `contact_handle` to profiles; create/update accept an
+    optional `contactHandle`; own profile responses include it.
+  - ACCEPTED connection: each side's `GET /connections` item includes the other
+    party's `contactHandle`.
+  - PENDING/DECLINED items: `contactHandle` is null.
+  - Match cards never include `contactHandle`.
+  *Layers:* db (Flyway V6), domain (`Profile` field + use-case commands), web, IT.
+  *Out of scope:* messaging, handle-format validation (T13), notifications.
+
+- [ ] **T13 — Input validation**
+  *Outcome:* Garbage input gets a structured 400 instead of a 500 or corrupt data.
+  *Acceptance:*
+  - At least one invalid-input IT per mutating endpoint (blank name, out-of-range
+    age/lat/lng, null `recipientProfileId`).
+  - 400 body = `code: VALIDATION_FAILED` + message + `fields` list (extends the
+    current two-field `ErrorResponse`).
+  - Domain use-case guard checks unchanged — Bean Validation is an edge filter, not
+    a substitute for domain rules.
+  *Layers:* web (+ `spring-boot-starter-validation`, already approved), IT.
+  *Out of scope:* rate limiting, bio-content sanitization, pagination.
 
 ---
 
 ## Parking Lot (not scheduled — ideas only, do not build)
 
+- Cursor pagination on `GET /api/v1/matches` (demoted from Up Next — revisit when
+  match lists exceed a screenful; irrelevant at 5-user pilot scale)
 - Interest embeddings / pgvector ML matching (needs real usage data first)
 - In-app messaging (transport decision deferred)
 - Push notifications (Expo + APNs/FCM)
