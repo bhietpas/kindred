@@ -6,6 +6,7 @@ import com.kindred.domain.port.ProfileRepository;
 import com.kindred.domain.usecase.CreateProfile;
 import com.kindred.domain.usecase.FetchProfile;
 import com.kindred.domain.usecase.FindMatches;
+import com.kindred.domain.usecase.ListConnections;
 import com.kindred.domain.usecase.RequestConnection;
 import com.kindred.domain.usecase.RespondToConnection;
 import com.kindred.domain.usecase.UpdateProfile;
@@ -51,5 +52,10 @@ class AppConfig {
     @Bean
     RespondToConnection respondToConnection(ProfileRepository profiles, ConnectionRepository connections) {
         return new RespondToConnection(profiles, connections);
+    }
+
+    @Bean
+    ListConnections listConnections(ConnectionRepository connections) {
+        return new ListConnections(connections);
     }
 }

@@ -107,6 +107,51 @@ class ConnectionControllerIT {
         insertProfile(otherProfileId, otherUserId);
     }
 
+    // ── GET /api/v1/connections ───────────────────────────────────────────
+
+    @Test
+    void returnsAllConnectionsForCurrentUser() {
+        createPendingConnection();                        // requester → recipient
+        postConnection(requesterProfileId, otherClerkId); // other → requester
+
+        ResponseEntity<ConnectionResponse[]> response = getConnections(requesterClerkId, null);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).hasSize(2);
+    }
+
+    @Test
+    void returnsOnlyConnectionsMatchingStatusFilter() {
+        UUID connectionId = createPendingConnection();        // requester → recipient PENDING
+        patchConnection(connectionId, "ACCEPTED", recipientClerkId); // → ACCEPTED
+        postConnection(requesterProfileId, otherClerkId);    // other → requester PENDING
+
+        ResponseEntity<ConnectionResponse[]> response = getConnections(requesterClerkId, "ACCEPTED");
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).hasSize(1);
+        assertThat(response.getBody()[0].status()).isEqualTo("ACCEPTED");
+    }
+
+    @Test
+    void returnsEmptyListWhenUserHasNoConnections() {
+        ResponseEntity<ConnectionResponse[]> response = getConnections(requesterClerkId, null);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEmpty();
+    }
+
+    @Test
+    void returnsBadRequestForInvalidStatusParam() {
+        ResponseEntity<String> response = restTemplate.exchange(
+                url("/api/v1/connections?status=BOGUS"),
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders(requesterClerkId)),
+                String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
     // ── POST /api/v1/connections ──────────────────────────────────────────
 
     @Test
@@ -202,6 +247,16 @@ class ConnectionControllerIT {
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────
+
+    /** GET connections for the given clerkId, with an optional status filter. */
+    private ResponseEntity<ConnectionResponse[]> getConnections(String asClerkId, String status) {
+        String path = "/api/v1/connections" + (status != null ? "?status=" + status : "");
+        return restTemplate.exchange(
+                url(path),
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders(asClerkId)),
+                ConnectionResponse[].class);
+    }
 
     /** POST as the given clerkId, requesting connection to recipientProfileId. */
     private ResponseEntity<ConnectionResponse> postConnection(UUID recipientProfileId, String asClerkId) {

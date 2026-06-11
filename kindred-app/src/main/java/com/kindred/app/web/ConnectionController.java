@@ -7,18 +7,22 @@ import com.kindred.domain.model.Connection;
 import com.kindred.domain.model.Profile;
 import com.kindred.domain.port.ProfileRepository;
 import com.kindred.domain.model.Result;
+import com.kindred.domain.usecase.ListConnections;
 import com.kindred.domain.usecase.RequestConnection;
 import com.kindred.domain.usecase.RespondToConnection;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,15 +38,47 @@ class ConnectionController {
 
     private final RequestConnection requestConnection;
     private final RespondToConnection respondToConnection;
+    private final ListConnections listConnections;
     private final ProfileRepository profiles;
     private final UserLookup userLookup;
 
     ConnectionController(RequestConnection requestConnection, RespondToConnection respondToConnection,
-                         ProfileRepository profiles, UserLookup userLookup) {
-        this.requestConnection  = requestConnection;
+                         ListConnections listConnections, ProfileRepository profiles, UserLookup userLookup) {
+        this.requestConnection   = requestConnection;
         this.respondToConnection = respondToConnection;
+        this.listConnections     = listConnections;
         this.profiles            = profiles;
         this.userLookup          = userLookup;
+    }
+
+    /** GET /api/v1/connections — list connections for the authenticated user. */
+    @GetMapping
+    ResponseEntity<?> list(@AuthenticationPrincipal CurrentUser currentUser,
+                            @RequestParam(required = false) String status) {
+        Optional<Connection.Status> statusFilter;
+        if (status != null) {
+            try {
+                statusFilter = Optional.of(Connection.Status.valueOf(status));
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest()
+                        .body(new ErrorResponse("INVALID_STATUS", "Unknown status: " + status));
+            }
+        } else {
+            statusFilter = Optional.empty();
+        }
+
+        Optional<UUID> userId = userLookup.findUserId(currentUser.clerkId());
+        if (userId.isEmpty()) {
+            return ResponseEntity.ok(List.of());
+        }
+
+        List<ConnectionResponse> result = listConnections
+                .execute(new ListConnections.Query(userId.get(), statusFilter))
+                .stream()
+                .map(ConnectionResponse::from)
+                .toList();
+
+        return ResponseEntity.ok(result);
     }
 
     /** POST /api/v1/connections — request a friendship connection. */
